@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -23,5 +25,19 @@ public class JDBCController {
         List<Person> personList = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Person.class));
         model.addAttribute("personList", personList);
         return "viewPage01";
+    }
+
+    @GetMapping("/new")
+    public String newMethod(Model model) {
+        Person person = new Person();
+        model.addAttribute("person", person);
+        return "viewPage01_new";
+    }
+
+    @PostMapping("/insert")
+    public String insertMethod(@ModelAttribute Person person) {
+        String sql = "insert into person(name, age, email) values(?,?,?)";
+        int resurtCount = jdbcTemplate.update(sql, person.getName(), person.getAge(), person.getEmail());
+        return "redirect:/exam01";
     }
 }
